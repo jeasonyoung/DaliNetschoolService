@@ -20,6 +20,10 @@ return array(
         'api/m/aq/detail/add'=> 'index/add_detail',//10.新增答疑明细(POST)
         'api/m/aq/suggest/add' =>  'index/add_suggest',//11.新增学员建议(POST)
     ),
-    'QUERY_LIMIT_TOP'      => 200,
-    'DB_PARAMS'            => array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL),
+    'QUERY_LIMIT_TOP'    => 200,
+    'DB_PARAMS'          => array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL),
+    'TOKEN_SECRET_PAIRS' => array(
+        'test' => '0123456',//令牌-密钥
+     ),
+    'AGENCY_ID'          => 'dali_001',
 );

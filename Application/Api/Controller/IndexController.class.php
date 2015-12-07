@@ -36,7 +36,7 @@ class IndexController extends AuthController {
         //验证签名成功
         if($_agencyId){
             //初始化模型
-            $_model = D('User');
+            $_model = D('DaliUser');
             //验证数据
             $_callback = $_model->login($_agencyId,$username,$pwd,$terminal);
             //

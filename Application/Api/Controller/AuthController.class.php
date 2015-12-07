@@ -89,21 +89,22 @@ class AuthController extends RestController{
     protected function loadAgencyIdByToken($token=''){
         if(APP_DEBUG) trace("根据令牌[$token]获取所属机构ID...");
         if(empty($token)) return null;
-        //缓存
-        static $_agencyIds = array();
-        //从缓存中加载数据
-        if(isset($_agencyIds[$token])){
-            return $_agencyIds[$token];
-        }
-        //从表中查找数据
-        $_model = M('Jigou')->field('jgid')
-                            ->where("`abbr_en` = '%s'", array($token))
-                            ->find();
-        if($_model){
-            $_agencyIds[$token] = $_model['jgid'];
-            return $_agencyIds[$token];
-        }
-        return null;
+        return C('AGENCY_ID');
+        // //缓存
+        // static $_agencyIds = array();
+        // //从缓存中加载数据
+        // if(isset($_agencyIds[$token])){
+        //     return $_agencyIds[$token];
+        // }
+        // //从表中查找数据
+        // $_model = M('Jigou')->field('jgid')
+        //                     ->where("`abbr_en` = '%s'", array($token))
+        //                     ->find();
+        // if($_model){
+        //     $_agencyIds[$token] = $_model['jgid'];
+        //     return $_agencyIds[$token];
+        // }
+        // return null;
     }
 
     /**
@@ -117,23 +118,34 @@ class AuthController extends RestController{
             $this->send_callback_error(-200,'令牌为空!');
             return null;
         }
-        //从表中查找数据
-        $_model = M('Jigou')->field('appkey,statetf')
-                            ->where("`abbr_en` = '%s'", array($token))
-                            ->find();
-        if(!$_model){
+        //从配置中查找
+        $_pairs = C('TOKEN_SECRET_PAIRS');
+        if(empty($_pairs)){
+            $this->send_callback_error(-204,'系统未设置令牌密钥对，请联系管理员!');
+            return null;
+        }
+        if(empty($_pairs[$token])){
             $this->send_callback_error(-201,'令牌不存在!');
             return null;
         }
-        if(empty($_model['statetf'])){
-            $this->send_callback_error(-202,'令牌已被停用!');
-            return null;
-        }
-        if(!isset($_model['appkey']) || empty($_model['appkey'])){
-            $this->send_callback_error(-203,'机构未设置密钥!');
-            return null;
-        }
-        return $_model['appkey'];
+        return $_pairs[$token];
+        //从表中查找数据
+        // $_model = M('Jigou')->field('appkey,statetf')
+        //                     ->where("`abbr_en` = '%s'", array($token))
+        //                     ->find();
+        // if(!$_model){
+        //     $this->send_callback_error(-201,'令牌不存在!');
+        //     return null;
+        // }
+        // if(empty($_model['statetf'])){
+        //     $this->send_callback_error(-202,'令牌已被停用!');
+        //     return null;
+        // }
+        // if(!isset($_model['appkey']) || empty($_model['appkey'])){
+        //     $this->send_callback_error(-203,'机构未设置密钥!');
+        //     return null;
+        // }
+        // return $_model['appkey'];
     }
 
     /**
